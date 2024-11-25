@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/17 00:00:21 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/11/25 15:10:39 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	process_linee(char *line, char **env)
 	{
 		print_tokens(tokens);
 		commands = parse_tokens(tokens);
-		if (commands->name)
+		if (commands && commands->name)
 		{
 			if (commands->next)
 			{
@@ -38,6 +38,7 @@ void	process_linee(char *line, char **env)
 		}
 		free_tokens(tokens);
 	}
+	return ;
 }
 
 void	init_shell(char **env)
@@ -76,8 +77,7 @@ char	**create_env(void)
 	}
 	env[0] = ft_strjoin("PWD=", cwd);
 	env[1] = ft_strdup("SHLVL=1");
-	env[2] = ft_strdup("PATH=/usr/local/sbin:/usr/local/bin:"
-			"/usr/sbin:/usr/bin:/sbin:/bin");
+	env[2] = ft_strdup("_=/usr/bin/env");
 	env[3] = NULL;
 	return (env);
 }
@@ -101,6 +101,7 @@ int	main(int argc, char **argv, char **env)
 	g_vars.khbi = -1;
 	g_vars.heredoc_interrupted = 0;
 	g_vars.in_pipe = 0;
+	g_vars.env_allocated = 0;
 	if (env == NULL || env[0] == NULL)
 	{
 		env = create_env();

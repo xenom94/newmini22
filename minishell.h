@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 12:10:05 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/16 23:03:13 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/11/25 14:08:04 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct s_global_vars
 	char					*saved_oldpwd;
 	int						flag_check;
 	int						in_fd;
+	int						env_allocated;
 
 }							t_global_vars;
 
@@ -240,6 +241,8 @@ typedef struct s_pipe_data
 	t_command				*current;
 	int						in_fd;
 	int						out_fd;
+	int 					*prev_pipe;
+	int 					*curr_pipe;
 }							t_pipe_data;
 
 typedef struct s_expand_vars

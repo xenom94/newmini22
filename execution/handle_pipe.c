@@ -46,27 +46,33 @@ void	wait_for_children(pid_t *pids, int pipe_count)
 		i++;
 	}
 }
-
+void exit_child_process(pid_t pid, int *prev_pipe, int *curr_pipe, t_pipe_data data)
+{
+	if (pid == 0)
+	{
+		setup_child_process(prev_pipe, curr_pipe, data.current, g_vars.env);
+		exit(1);
+	}
+}
 void	handle_pipes(t_command *commands, char **env)
 {
+	(void)env;
 	t_pipe_data	data;
-	int			prev_pipe[2];
+	int			prev_pipe[2] ;
 	int			curr_pipe[2];
 	pid_t		pid;
 
-	if (!initialize_pipe_data(&data, commands))
-		return ;
+	prev_pipe[0] = -1;
+	prev_pipe[1] = -1;
+	initialize_pipe_data(&data, commands);
 	pipe_signals();
 	data.current = commands;
 	data.i = 0;
 	while (data.current)
 	{
-		if (!setup_next_pipe(curr_pipe, data.current))
-			return ;
-		printf("pipe: %d %d\n", curr_pipe[0], curr_pipe[1]);
+		setup_next_pipe(curr_pipe, data.current);
 		pid = fork();
-		if (pid == 0)
-			setup_child_process(prev_pipe, curr_pipe, data.current, env);
+		exit_child_process(pid, prev_pipe, curr_pipe, data);
 		data.pids[data.i++] = pid;
 		close_prev_pipe(prev_pipe);
 		update_prev_pipe(prev_pipe, curr_pipe);

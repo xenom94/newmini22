@@ -55,4 +55,5 @@ void	update_prev_pipe(int prev_pipe[2], int curr_pipe[2])
 void	wait_for_children_and_cleanup(t_pipe_data *data)
 {
 	wait_for_children(data->pids, data->pipe_count);
+	free(data->pids);
 }

@@ -6,33 +6,53 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/16 23:29:18 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/11/25 14:56:34 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	add_to_env(char ***env, char *new_var)
+void	free_env(char **env)
 {
-	int		len;
-	int		i;
-	char	**new_env;
+	int	i;
 
-	len = double_pointer_len(*env);
-	new_env = malloc(sizeof(char *) * (len + 2));
-	if (new_env)
+	i = 0;
+	while (env[i])
 	{
-		i = 0;
-		while (i < len)
-		{
-			new_env[i] = (*env)[i];
-			i++;
-		}
-		new_env[i] = new_var;
-		new_env[i + 1] = NULL;
-		*env = new_env;
+		free(env[i]);
+		i++;
 	}
+	free(env);
 }
+void add_to_env(char ***env, char *new_var)
+{
+    int     len;
+    int     i;
+    char    **new_env;
+
+    len = double_pointer_len(*env);
+    new_env = malloc(sizeof(char *) * (len + 2));
+    i = 0;
+    while (i < len)
+    {
+        new_env[i] = ft_strdup((*env)[i]);
+        if (!new_env[i])
+        {
+            while (--i >= 0)
+                free(new_env[i]);
+            free(new_env);
+            return;
+        }
+        i++;
+    }
+    new_env[i] = ft_strdup(new_var);
+    new_env[i + 1] = NULL;
+	if (g_vars.env_allocated)
+	   free_env(*env);
+    *env = new_env;
+    g_vars.env_allocated = 1;
+}
+
 
 void	print_env(void)
 {
@@ -47,19 +67,6 @@ void	print_env(void)
 	}
 }
 
-void	free_env(char **env)
-{
-	int	i;
-
-	i = 0;
-	while (env[i])
-	{
-		free(env[i]);
-		i++;
-	}
-	free(env);
-}
-
 void	env(t_command *cmd)
 {
 	int		i;
@@ -69,9 +76,7 @@ void	env(t_command *cmd)
 	new_env = NULL;
 	if (cmd->args && cmd->args[1] && ft_strcmp(cmd->args[1], "-i") == 0)
 	{
-		g_vars.env = NULL;
 		g_vars.env = create_env();
-
 		return ;
 	}
 	else
@@ -86,5 +91,5 @@ void	env(t_command *cmd)
 	}
 	if (g_vars.env == NULL || g_vars.env[0] == NULL)
 		create_env();
-	ft_setter(0);
+	ft_setter(0);	
 }
