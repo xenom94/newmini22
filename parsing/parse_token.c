@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_token.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/29 00:21:47 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/12/07 21:05:05 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ void	all_parse(t_parse_context *ctx, t_token **tokens)
 	parse_token_four(ctx, tokens);
 }
 
-
-
 t_command	*parse_tokens(t_token *tokens)
 {
 	t_parse_context	ctx;
@@ -86,13 +84,15 @@ t_command	*parse_tokens(t_token *tokens)
 		if (tokens)
 		{
 			parse_token_five(&ctx, &tokens);
-			if (g_vars.heredoc_interrupted)
+			if (g_vars.heredoc_interrupted || g_vars.error_printed)
 			{
-				g_vars.exit_status = 130;
-				return (ctx.command_list);
+				g_vars.error_printed = 0;
+				g_vars.heredoc_interrupted = 0;
+				free_command_list(ctx.command_list);
+				return (NULL);
 			}
+			tokens = tokens->next;
 		}
-		tokens = tokens->next;
 	}
 	return (ctx.command_list);
 }

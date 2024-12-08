@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/16 22:29:51 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/06 23:48:13 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,9 @@ void	handle_command_execution(t_command *current, char **env)
 	if (is_builtin(current) != NOT_BUILT_IN)
 		execute_builtin(current, env, is_builtin(current));
 	else
+	{
 		execute_external_command(current, env);
+	}
 	exit(0);
 }
 
@@ -46,7 +48,9 @@ void	wait_for_children(pid_t *pids, int pipe_count)
 		i++;
 	}
 }
-void exit_child_process(pid_t pid, int *prev_pipe, int *curr_pipe, t_pipe_data data)
+
+void	exit_child_process(pid_t pid, int *prev_pipe, int *curr_pipe,
+		t_pipe_data data)
 {
 	if (pid == 0)
 	{
@@ -54,14 +58,15 @@ void exit_child_process(pid_t pid, int *prev_pipe, int *curr_pipe, t_pipe_data d
 		exit(1);
 	}
 }
+
 void	handle_pipes(t_command *commands, char **env)
 {
-	(void)env;
 	t_pipe_data	data;
-	int			prev_pipe[2] ;
+	int			prev_pipe[2];
 	int			curr_pipe[2];
 	pid_t		pid;
 
+	(void)env;
 	prev_pipe[0] = -1;
 	prev_pipe[1] = -1;
 	initialize_pipe_data(&data, commands);
@@ -80,4 +85,11 @@ void	handle_pipes(t_command *commands, char **env)
 	}
 	wait_for_children_and_cleanup(&data);
 	all_signals();
+}
+
+void	setup_child_signals(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGTSTP, SIG_DFL);
 }

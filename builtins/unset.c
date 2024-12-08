@@ -6,23 +6,11 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 15:27:07 by nel-ouar          #+#    #+#             */
-/*   Updated: 2024/11/25 15:20:28 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 02:52:33 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-size_t	length(char *s)
-{
-	size_t	i;
-
-	i = 0;
-	if (!s)
-		return (0);
-	while (s[i] && s[i] != '=')
-		i++;
-	return (i);
-}
 
 static int	find_env_var(char *var_name)
 {
@@ -39,19 +27,28 @@ static int	find_env_var(char *var_name)
 		curr_len = length(g_vars.env[i]);
 		if (curr_len == var_len && !ft_strncmp(g_vars.env[i], var_name,
 				var_len))
+		{
+			free(g_vars.env[i]);
 			return (i);
+		}
 		i++;
 	}
 	return (-1);
 }
 
-static void	remove_env_var(int index, int env_len)
+static void	remove_env_var(char *var_name)
 {
 	int	i;
+	int	env_len;
+	int	env_index;
 
-	if (index < 0 || index >= env_len)
+	env_len = 0;
+	while (g_vars.env[env_len])
+		env_len++;
+	env_index = find_env_var(var_name);
+	if (env_index == -1)
 		return ;
-	i = index;
+	i = env_index;
 	while (i < env_len - 1)
 	{
 		g_vars.env[i] = g_vars.env[i + 1];
@@ -103,29 +100,26 @@ void	add_env_var(const char *new_var)
 
 void	unset(t_command *cmd)
 {
-	int	i;
-	int	env_index;
-	int	env_len;
+	int		i;
+	char	*var_name;
 
-	i = 0 ;
+	i = 1;
 	while (cmd->args[i])
 	{
-		if (!is_valid_identifier(cmd->args[i++]))
+		var_name = cmd->args[i];
+		if (var_name[0] == '$')
+			var_name++;
+		if (is_valid_identifier(var_name))
 		{
-			ft_printf("minishell: unset: `%s': not a valid identifier\n",
-				cmd->args[i++]);
-			g_vars.exit_status = 1;
-			continue ;
+			remove_env_var(var_name);
 		}
-		env_len = 0;
-		while (g_vars.env[env_len])
-			env_len++;
-		env_index = find_env_var(cmd->args[i]);
-		if (env_index != -1)
+		else
 		{
-			remove_env_var(env_index, env_len);
-			if (ft_strcmp(cmd->args[i++], "SHLVL") == 0)
-				add_env_var("SHLVL=1");
+			ft_putstr_fd("minishell: unset: `", 2);
+			ft_putstr_fd(cmd->args[i], 2);
+			ft_putstr_fd("': not a valid identifier\n", 2);
+			g_vars.exit_status = 0;
 		}
+		i++;
 	}
 }

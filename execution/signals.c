@@ -27,6 +27,7 @@ void	child_signals(void)
 
 void	sigint_handlerh(int signum)
 {
+	g_vars.exit_status = 130;
 	(void)signum;
 	g_vars.khbi = dup(0);
 	close(0);
@@ -46,13 +47,11 @@ void	reset_after_heredoc(void)
 
 void	sigint_handler(int sig)
 {
-	g_vars.exit_status = 130;	
-
+	g_vars.exit_status = 130;
 	if (sig == SIGINT)
 	{
 		if (!g_vars.in_pipe && g_vars.heredoc_interrupted == 0)
 		{
-		
 			write(1, "\n", 1);
 			rl_on_new_line();
 			rl_replace_line("", 0);
@@ -60,12 +59,9 @@ void	sigint_handler(int sig)
 		}
 		else if (g_vars.heredoc_interrupted == 1)
 		{
-			g_vars.exit_status = 130;
 			rl_on_new_line();
 			rl_replace_line("", 0);
 			rl_redisplay();
 		}
 	}
-	
-
 }

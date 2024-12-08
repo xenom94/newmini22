@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/24 15:27:37 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/12/07 21:08:57 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,9 @@ void	custom_exit(t_command *cmd, char **env)
 	int	len;
 
 	len = double_pointer_len(cmd->args);
-	
-	printf("--exit\n");
 	if (len == 1)
 	{
 		exit(g_vars.exit_status);
-		
 	}
 	else if (len == 2 && is_num(cmd->args[1]))
 	{

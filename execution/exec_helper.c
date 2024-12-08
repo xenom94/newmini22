@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/16 22:27:14 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 02:56:47 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ char	**ft_free(char **str)
 		free(str[i]);
 		i++;
 	}
+	free(str[i]);
 	free(str);
 	return (NULL);
 }
@@ -52,10 +53,23 @@ char	*check_path(char **cmd, char **path)
 
 char	*plo(char **cmd)
 {
-	if (access(cmd[0], F_OK) == 0)
-		return (ft_strdup(cmd[0]));
-	else
+	char	*dup_cmd;
+
+	if (!cmd)
 		return (NULL);
+	if (access(cmd[0], F_OK) == 0)
+	{
+		dup_cmd = ft_strdup(cmd[0]);
+		if (!dup_cmd)
+		{
+			return (NULL);
+		}
+		return (dup_cmd);
+	}
+	else
+	{
+		return (NULL);
+	}
 }
 
 char	*get_path(char **cmd)
@@ -63,14 +77,11 @@ char	*get_path(char **cmd)
 	int		i;
 	char	**path;
 	char	*env_path;
-		if (!cmd[0])
+
+	if (!cmd[0])
 		return (NULL);
-	if(ft_strchr(cmd[0], '/'))
-	{
-		if(!cmd)
-			return (NULL);
+	if (ft_strchr(cmd[0], '/'))
 		return (plo(cmd));
-	}
 	env_path = NULL;
 	i = 0;
 	while (g_vars.env[i])
@@ -84,6 +95,5 @@ char	*get_path(char **cmd)
 	}
 	if (env_path == NULL || *env_path == '\0')
 		return (NULL);
-	path = ft_split(env_path, ":");
-	return (check_path(cmd, path));
+	return (path = ft_split(env_path, ":"), check_path(cmd, path));
 }

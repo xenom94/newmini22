@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_helper.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/24 15:27:32 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/12/07 02:21:27 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,16 @@ void	print_export(char *env)
 		}
 		printf("=\"");
 		i++;
-		printf("%s\"\n", (env + i));
+		while (env[i])
+		{
+			printf("%c", env[i++]);
+		}
+		printf("\"\n");
 	}
 	else
+	{
 		printf("%s\n", env);
+	}
 }
 
 int	check_env(char *cmd, char **env)
@@ -41,7 +47,7 @@ int	check_env(char *cmd, char **env)
 		return (0);
 	while (env[i])
 	{
-		if (!ft_strncmp(env[i], cmd, length(env[i])))
+		if (!ft_strncmp(env[i], cmd, length(cmd)))
 			return (i);
 		else
 			i++;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_com_arg.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stakhtou <stakhtou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/21 16:39:32 by stakhtou         ###   ########.fr       */
+/*   Updated: 2024/12/02 06:33:00 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ void	process_value(const char *input, int *i, t_handle_vars *vars,
 		return ;
 	if (*tokens == NULL || vars->last_token->type == PIPE
 		|| vars->last_token->type == FILENAME
-		|| vars->last_token->type == DELIMITER)
+		|| vars->last_token->type == DELIMITER || (vars->last_token->value
+			&& vars->last_token->value[0] == '\0'))
 		vars->type = COMMANDE;
 	else
 		vars->type = ARG;

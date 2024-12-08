@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stakhtou <stakhtou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/21 16:37:16 by stakhtou         ###   ########.fr       */
+/*   Updated: 2024/12/06 23:38:20 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,28 +35,7 @@ char	*process_quotes(t_expansion *exp)
 	free(exp->result);
 	exp->result = exp->new_result;
 	exp->temp++;
-	
 	return (exp->result);
-}
-
-char	*get_env_value(char *name, char **env)
-{
-	int		i;
-	size_t	name_len;
-
-	i = 0;
-	name_len = ft_strlen(name);
-	if (!name || !env)
-		return (NULL);
-	while (env[i])
-	{
-		if (ft_strncmp(env[i], name, name_len) == 0 && env[i][name_len] == '=')
-		{
-			return (env[i] + name_len + 1);
-		}
-		i++;
-	}
-	return (NULL);
 }
 
 void	handle_env_exit_status(t_expansion *exp, char **env)
@@ -73,19 +52,20 @@ void	handle_env_exit_status(t_expansion *exp, char **env)
 	free(exit_status_str);
 }
 
-char *expand_env_variable(t_expansion *exp, char **env)
+char	*expand_env_variable(t_expansion *exp, char **env)
 {
 	exp->before_env = ft_substr(exp->temp, 0, exp->env_pos - exp->temp);
 	exp->new_result = ft_strjoin(exp->result, exp->before_env);
 	free(exp->result);
 	free(exp->before_env);
 	exp->result = exp->new_result;
-	if (exp->env_pos[1] == '?') {
-	   handle_env_exit_status(exp, env);
-	   return (exp->result);
+	if (exp->env_pos[1] == '?')
+	{
+		handle_env_exit_status(exp, env);
+		return (exp->result);
 	}
 	exp->env_len = 0;
-	while (exp->env_pos[1 + exp->env_len] && (ft_isalnum(exp->env_pos[1 
+	while (exp->env_pos[1 + exp->env_len] && (ft_isalnum(exp->env_pos[1
 					+ exp->env_len]) || exp->env_pos[1 + exp->env_len] == '_'))
 		exp->env_len++;
 	exp->env_name = ft_substr(exp->env_pos + 1, 0, exp->env_len);
@@ -122,7 +102,8 @@ char	*expand_variables(const char *str)
 			continue ;
 		}
 		exp.env_pos = ft_strchr(exp.temp, '$');
-		if (!exp.in_single_quote && exp.env_pos && exp.env_pos[1] != '\0')
+		if (!exp.in_single_quote && exp.env_pos && exp.env_pos[1] != '\0'
+			&& exp.env_pos[1] != ' ' && exp.env_pos[1] != '"')
 			exp.result = expand_env_variable(&exp, g_vars.env);
 		else
 		{

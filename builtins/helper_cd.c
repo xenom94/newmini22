@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/16 16:28:06 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/02 09:54:44 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,17 @@
 
 void	update_env_variable(char **env, char *var, char *value)
 {
-	char	*new_var;
 	int		i;
+	char	new_var[4096];
 
 	i = 0;
+	ft_strcpy(new_var, var);
+	ft_strcat(new_var, value);
 	while (env[i])
 	{
 		if (ft_strncmp(env[i], var, ft_strlen(var)) == 0)
 		{
-			new_var = ft_strjoin((char *)var, (char *)value);
-			env[i] = new_var;
+			ft_strcpy(env[i], new_var);
 			return ;
 		}
 		i++;

@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 12:10:05 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/25 14:08:04 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 23:48:04 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ typedef struct s_global_vars
 	int						flag_check;
 	int						in_fd;
 	int						env_allocated;
+	int						error_printed;
 
 }							t_global_vars;
 
@@ -241,8 +242,8 @@ typedef struct s_pipe_data
 	t_command				*current;
 	int						in_fd;
 	int						out_fd;
-	int 					*prev_pipe;
-	int 					*curr_pipe;
+	int						*prev_pipe;
+	int						*curr_pipe;
 }							t_pipe_data;
 
 typedef struct s_expand_vars
@@ -284,7 +285,7 @@ typedef struct s_parse_context
 	char		temp_filename[sizeof("/tmp/minishell_heredocXXXXXX")];
 	int			fd;
 	char		exit_status_str[12];
-}				t_parse_context;
+}							t_parse_context;
 
 typedef struct s_env_var_data
 {
@@ -340,10 +341,9 @@ void						handle_existing_no_value(t_append *append,
 
 int							my_mkstemp(char *template);
 char						*expand_variables(const char *str);
-void						increment_shlvl(char **env);
+void						increment_shlvl(char **env, bool is_unset);
 void						append_export(char *cmd, char ***env, int len);
-char						*handle_heredoc(const char *delimiter,
-								int expand_vars);
+
 int							ft_isspace(char c);
 void						handle_command_or_argument(const char *input,
 								int *i, int len, t_token **tokens);
@@ -387,7 +387,7 @@ void						heredoc_signals(void);
 
 void						reset_signals(void);
 char						*handle_heredoc(const char *delimiter,
-								int expand_vars);
+								int expand_vars, t_parse_context *ctx);
 int							read_and_process_line(t_heredoc *hdoc,
 								int expand_vars);
 void						cleanup_heredoc(t_heredoc *hdoc);
@@ -461,8 +461,7 @@ int							create_temp_file(char *template);
 int							my_mkstemp(char *template);
 char						*expand_env_vars(char *input);
 void						sigint_handlerh(int sig);
-char						*handle_heredoc(const char *delimiter,
-								int expand_vars);
+
 pid_t						execute_piped_command(t_command *cmd, int in_fd,
 								int out_fd, char **env);
 void						update_old_pwd(char *old_pwd, char **env);
@@ -502,7 +501,7 @@ void						setup_redirection(t_command *cmd);
 int							is_num(char *str);
 void						export(t_command *cmd);
 int							check_export(char *cmd);
-void						export_helper(char *cmd, char ***env, int len);
+int							export_helper(char *cmd, char ***env, int len);
 void						print_export(char *env);
 int							pwd(t_command *cmd, char **env);
 void						unset(t_command *cmd);

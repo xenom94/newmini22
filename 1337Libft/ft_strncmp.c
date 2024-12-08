@@ -32,7 +32,11 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 
 int	ft_strcmp(const char *s1, const char *s2)
 {
-	if (!s1 || !s2)
+	if (!s1 && !s2)
 		return (0);
+	if (!s1)
+		return (-1);
+	if (!s2)
+		return (1);
 	return (ft_strncmp(s1, s2, ft_strlen(s1) + 1));
 }

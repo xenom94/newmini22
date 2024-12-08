@@ -47,7 +47,6 @@ void	home(char *oldpwd)
 	if (oldpwd)
 		update_env_variable(g_vars.env, "OLDPWD=", oldpwd);
 	if (chdir(home_path) == -1)
-
 	{
 		ft_putstr_fd("minishell: cd: HOME not accessible\n", 2);
 		g_vars.exit_status = 1;

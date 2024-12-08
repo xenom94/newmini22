@@ -70,7 +70,6 @@ void	add_command(t_command **list, t_command *cmd)
 {
 	t_command	*current;
 
-
 	if (!*list)
 	{
 		*list = cmd;

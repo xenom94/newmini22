@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/25 14:05:06 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 02:39:52 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,27 @@
 int	handle_cmd_exit(t_command *cmd)
 {
 	int	i;
+
 	i = 0;
-	while(cmd->args[1][i])
-{
-	if(!ft_isdigit(cmd->args[1][i]))
+	if (!cmd->args[1])
 	{
-		ft_putstr_fd("exit: numeric argument required\n", 2);
-		g_vars.exit_status = 2;
-		return (0);
+		exit(g_vars.exit_status);
 	}
-	i++;
-}
+	while (cmd->args[1][i])
+	{
+		if (!ft_isdigit(cmd->args[1][i]))
+		{
+			ft_putstr_fd("exit: numeric argument required\n", 2);
+			g_vars.exit_status = 2;
+			exit(g_vars.exit_status);
+			return (0);
+		}
+		i++;
+	}
 	if (cmd->arg_count > 2)
 	{
 		ft_putstr_fd("exit: too many arguments\n", 2);
-		g_vars.exit_status = 1;
-		return (0);
+		return (g_vars.exit_status = 1, 0);
 	}
 	return (1);
 }
@@ -43,16 +48,17 @@ void	ft_exit(t_command *cmd)
 	i = 0;
 	status = 0;
 	ft_putstr_fd("exit\n", 1);
-	if(!handle_cmd_exit(cmd))
+	if (!handle_cmd_exit(cmd))
 		return ;
 	if (cmd->arg_count == 2)
 	{
 		while (cmd->args[1][i])
 		{
 			if (!ft_isdigit(cmd->args[1][i]))
-			{	
-				printf("minishell: exit: %s: numeric argument required\n", cmd->args[1]);
-				g_vars.exit_status =  2 ;
+			{
+				printf("minishell: exit: %s: numeric argument required\n",
+					cmd->args[1]);
+				g_vars.exit_status = 2;
 				exit(g_vars.exit_status);
 			}
 			i++;
@@ -75,9 +81,7 @@ void	export(t_command *cmd)
 		{
 			if (check_export(cmd->args[i]) == 1)
 			{
-				len = 0;
-				while (g_vars.env[len])
-					len++;
+				len = ft_strlen(cmd->args[i]);
 				export_helper(cmd->args[i], &g_vars.env, len);
 			}
 			i++;
@@ -85,9 +89,11 @@ void	export(t_command *cmd)
 	}
 	else
 	{
-		i = -1;
-		while (g_vars.env[++i])
-			print_export(g_vars.env[i]);
+		i = 0;
+		while (g_vars.env[i])
+		{
+			print_export(g_vars.env[i++]);
+		}
 	}
 }
 

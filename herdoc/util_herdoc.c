@@ -71,35 +71,41 @@ int	realloc_content(t_heredoc *hd)
 
 static char	*read_heredoc_content(t_heredoc *hd)
 {
+	hd->content = ft_strdup("");
+	hd->content_capacity = 1;
 	while (1)
 	{
 		hd->line = readline("> ");
 		if (!hd->line || g_vars.heredoc_interrupted)
 		{
 			free(hd->line);
-			break ;
 		}
-		if (ft_strcmp(hd->line, hd->unquoted_delimiter) == 0
-			|| !process_line(hd) || !realloc_content(hd))
+		if (ft_strcmp(hd->line, hd->unquoted_delimiter) == 0)
 		{
 			free(hd->line);
 			break ;
 		}
+		if (!process_line(hd) || !realloc_content(hd))
+			return (NULL);
 		ft_strcpy(hd->content + hd->content_size, hd->processed_line);
 		hd->content_size += hd->line_len;
 		hd->content[hd->content_size++] = '\n';
 		if (hd->expand_vars && hd->processed_line != hd->line)
 			free(hd->processed_line);
+		free(hd->line);
 	}
+	hd->content[hd->content_size] = '\0';
 	return (hd->content);
 }
 
-char	*handle_heredoc(const char *delimiter, int expand_vars)
+char	*handle_heredoc(const char *delimiter, int expand_vars,
+		t_parse_context *ctx)
 {
 	t_heredoc	hd;
 	void		(*old_handler)(int);
 	char		*result;
 
+	(void)ctx;
 	g_vars.heredoc_interrupted = 0;
 	old_handler = signal(SIGINT, sigint_handlerh);
 	init_heredoc(&hd, delimiter, expand_vars);
@@ -108,9 +114,7 @@ char	*handle_heredoc(const char *delimiter, int expand_vars)
 	dup2(g_vars.khbi, 0);
 	if (g_vars.heredoc_interrupted)
 	{
-		free(hd.content);
-		free(hd.unquoted_delimiter);
-		g_vars.heredoc_interrupted = 1;
+		g_vars.exit_status = 130;
 		return (NULL);
 	}
 	if (result)

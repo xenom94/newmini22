@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 21:52:15 by iabboudi          #+#    #+#             */
-/*   Updated: 2024/11/16 22:23:44 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/02 05:55:07 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,15 +57,24 @@ void	execute_external_command(t_command *current, char **env)
 {
 	char	*path;
 
+	while (current->args && current->args[0] && current->args[0][0] == '\0')
+		current->args++;
+	if (!current->args || !current->args[0])
+		exit(0);
 	path = get_path(current->args);
-	if (!path)
+	if (!path && current->name)
 	{
 		ft_putstr_fd("minishell: command not found: ", 2);
 		ft_putstr_fd(current->args[0], 2);
 		ft_putstr_fd("\n", 2);
 		exit(127);
 	}
-	execve(path, current->args, env);
+	if (execve(path, current->args, env) == -1 && current->name)
+	{
+		perror("minishell: execution failed");
+		exit(127);
+	}
 	free(path);
-	exit(127);
+	free(current->args[0]);
+	exit(0);
 }

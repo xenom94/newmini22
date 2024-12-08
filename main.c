@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/25 15:10:39 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 23:41:14 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,18 @@ void	process_linee(char *line, char **env)
 	tokens = tokenize_input(line);
 	if (tokens)
 	{
-		print_tokens(tokens);
 		commands = parse_tokens(tokens);
-		if (commands && commands->name)
+		if (commands)
 		{
-			if (commands->next)
+			if ((commands->name || commands->redirections))
 			{
-				handle_pipes(commands, env);
+				if (commands->next)
+					handle_pipes(commands, env);
+				else if (commands->name || commands->redirections)
+					execute_single_cmd(commands, env);
 			}
 			else
-			{
-				execute_single_cmd(commands, env);
-			}
+				return ;
 			free_command_list(commands);
 		}
 		free_tokens(tokens);
@@ -51,9 +51,13 @@ void	init_shell(char **env)
 		line = readline("\033[3;32mminishell$ \033[0m");
 		if (!line)
 		{
-			if(g_vars.env[1][6] >= '2' && g_vars.env[3] == NULL)
-				printf("\n");
-			break ; 
+			printf("exit\n");
+			if (g_vars.khbi == 655)
+			{
+				if (env)
+					ft_free(env);
+			}
+			break ;
 		}
 		if (line)
 		{
@@ -69,7 +73,7 @@ char	**create_env(void)
 	char	**env;
 	char	cwd[1024];
 
-	env = malloc(sizeof(char *) * 5);
+	env = malloc(sizeof(char *) * 4);
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 	{
 		perror("getcwd() error");
@@ -96,18 +100,23 @@ void	handle_exit_status(int status)
 
 int	main(int argc, char **argv, char **env)
 {
+	bool	isunset;
+
 	(void)argc;
 	(void)argv;
 	g_vars.khbi = -1;
 	g_vars.heredoc_interrupted = 0;
 	g_vars.in_pipe = 0;
 	g_vars.env_allocated = 0;
+	isunset = false;
 	if (env == NULL || env[0] == NULL)
 	{
 		env = create_env();
+		g_vars.khbi = 655;
+		isunset = true;
 	}
 	g_vars.env = env;
-	increment_shlvl(g_vars.env);
-	init_shell(env);
+	increment_shlvl(g_vars.env, isunset);
+	init_shell(g_vars.env);
 	return (g_vars.exit_status);
 }

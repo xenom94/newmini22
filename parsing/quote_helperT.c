@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quote_helperT.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stakhtou <stakhtou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/21 18:42:44 by stakhtou         ###   ########.fr       */
+/*   Updated: 2024/12/02 05:30:13 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ char	*remove_quotes(const char *str)
 	len = ft_strlen(str);
 	result = malloc(len + 1);
 	if (!result)
-		return (NULL);
+		free(result);
 	pro_quotes(str, result, len);
 	return (result);
 }

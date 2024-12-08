@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/25 14:56:34 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 02:24:00 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,35 +24,31 @@ void	free_env(char **env)
 	}
 	free(env);
 }
-void add_to_env(char ***env, char *new_var)
+
+void	add_to_env(char ***env, char *new_var)
 {
-    int     len;
-    int     i;
-    char    **new_env;
+	int		len;
+	int		i;
+	char	**new_env;
 
-    len = double_pointer_len(*env);
-    new_env = malloc(sizeof(char *) * (len + 2));
-    i = 0;
-    while (i < len)
-    {
-        new_env[i] = ft_strdup((*env)[i]);
-        if (!new_env[i])
-        {
-            while (--i >= 0)
-                free(new_env[i]);
-            free(new_env);
-            return;
-        }
-        i++;
-    }
-    new_env[i] = ft_strdup(new_var);
-    new_env[i + 1] = NULL;
+	len = double_pointer_len(*env);
+	new_env = malloc(sizeof(char *) * (len + 2));
+	i = 0;
+	while (i < len)
+	{
+		new_env[i] = ft_strdup((*env)[i]);
+		i++;
+	}
+	new_env[i] = ft_strdup(new_var);
+	new_env[i + 1] = NULL;
 	if (g_vars.env_allocated)
-	   free_env(*env);
-    *env = new_env;
-    g_vars.env_allocated = 1;
+	{
+		g_vars.env_allocated = 0;
+		free_env(*env);
+	}
+	*env = new_env;
+	g_vars.env_allocated = 1;
 }
-
 
 void	print_env(void)
 {
@@ -79,6 +75,8 @@ void	env(t_command *cmd)
 		g_vars.env = create_env();
 		return ;
 	}
+	else if (cmd->args && cmd->args[i])
+		return ;
 	else
 		new_env = g_vars.env;
 	while (cmd->args[i] && ft_strchr(cmd->args[i], '='))
@@ -91,5 +89,5 @@ void	env(t_command *cmd)
 	}
 	if (g_vars.env == NULL || g_vars.env[0] == NULL)
 		create_env();
-	ft_setter(0);	
+	ft_setter(0);
 }

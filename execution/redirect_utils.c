@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/16 23:01:58 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 23:42:54 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,6 @@ int	handle_redirection(t_redirection *redir, int fd_in)
 	if (redir->type == INPUT || redir->type == HEREDOC)
 	{
 		expanded = ft_strdup(redir->filename);
-		if (redir->type == INPUT)
-		{
-			if (check_file(expanded, O_RDONLY) == -1)
-			{
-				g_vars.exit_status = 1;
-				free(expanded);
-				return (-1);
-			}
-		}
 		new_fd = open(expanded, O_RDONLY);
 		if (new_fd < 0)
 		{
@@ -69,23 +60,28 @@ int	handle_output_redirection(t_redirection *red, int fd_out)
 {
 	int		new_fd;
 	char	*expanded;
+	char	*strdup;
 
-	expanded = expand_variables(ft_strdup(red->filename));
-
-	if (ft_strlen(expanded) == 0)
+	strdup = ft_strdup(red->filename);
+	expanded = expand_variables(strdup);
+	if (!expanded)
 	{
 		ft_putstr_fd("ambiguous redirect\n", 2);
 		free(expanded);
+		free(strdup);
 		return (-1);
 	}
 	if (red->type == OUTPUT)
 		new_fd = open(expanded, O_WRONLY | O_CREAT | O_TRUNC, P);
 	else
 		new_fd = open(expanded, O_WRONLY | O_CREAT | O_APPEND, P);
-	free(expanded);
 	if (new_fd < 0)
-		return (-1);
+	{
+		return (free(expanded), free(strdup), -1);
+	}
 	dup2(new_fd, fd_out);
+	free(expanded);
+	free(strdup);
 	return (new_fd);
 }
 

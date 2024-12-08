@@ -38,7 +38,6 @@ void	setup_pipe(int pipes[2][2], int i)
 
 void	close_prev_pipe(int prev_pipe[2])
 {
-	printf("closed prev pipe\n");
 	if (prev_pipe[0] != -1)
 	{
 		close(prev_pipe[0]);
