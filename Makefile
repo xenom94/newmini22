@@ -14,12 +14,13 @@ builtins/builtins.c builtins/env.c execution/signals.c execution/handle_pipe.c \
 herdoc/expande_her.c herdoc/herdoc_one.c builtins/helper_cd.c parsing/parser_help.c \
 parsing/parser_add.c parsing/parser_utils.c execution/handle_pipe_helper.c \
 execution/exec_helper.c builtins/unset.c builtins/builtins_utils.c builtins/export_helper.c \
-  execution/path_expantion.c execution/signals_helper.c \
-execution/handle_pipe_helper2.c execution/redirect_utils2.c execution/exec_helper2.c
+execution/path_expantion.c execution/signals_helper.c herdoc/utils_read.c \
+execution/handle_pipe_helper2.c execution/redirect_utils2.c execution/exec_helper2.c Garbage_collector/memory.c
+
 OBJS = $(SRCS:.c=.o)
 LIBFT = 1337Libft/libft.a
 CC = cc
-CFLAGS = -Wall -Wextra -Werror 
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
 LDFLAGS = -L1337Libft -lft -L/Users/$(USER)/homebrew/opt/readline/lib -lreadline
 
 # Add silent flags

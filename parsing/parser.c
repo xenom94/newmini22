@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/07 23:47:02 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/12 20:08:53 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,20 +68,20 @@ void	free_command(t_command *cmd)
 	int				i;
 
 	if (cmd->name)
-		free(cmd->name);
+		gc_add(0, cmd->name);
 	i = 0;
 	while (i < cmd->arg_count)
 	{
-		free(cmd->args[i]);
+		gc_add(0, cmd->args[i]);
 		i++;
 	}
-	free(cmd->args);
+	gc_add(0, cmd->args);
 	redir = cmd->redirections;
 	while (redir)
 	{
 		next = redir->next;
-		free(redir->filename);
-		free(redir);
+		gc_add(0, redir->filename);
+		gc_add(0, redir);
 		redir = next;
 	}
 	free(cmd);
