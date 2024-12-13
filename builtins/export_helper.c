@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/07 02:21:27 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/13 02:28:19 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,35 @@
 void	print_export(char *env)
 {
 	int	i;
+	char *pwd;
+
 
 	i = 0;
 	printf("declare -x ");
 	if (ft_strchr(env, '='))
 	{
-		while (env[i] != '=')
+		if (strncmp(env, "PWD=", 4) == 0)
 		{
-			printf("%c", env[i++]);
+			pwd = getcwd(NULL, 0);
+			if (pwd)
+			{
+				printf("PWD=\"%s\"\n", pwd);
+				free(pwd);
+				return;
+			}
+			printf("PWD=\"%s\"\n", env + 4);
+			return;
 		}
+		while (env[i] && env[i] != '=')
+			printf("%c", env[i++]);
 		printf("=\"");
 		i++;
 		while (env[i])
-		{
 			printf("%c", env[i++]);
-		}
 		printf("\"\n");
 	}
 	else
-	{
 		printf("%s\n", env);
-	}
 }
 
 int	check_env(char *cmd, char **env)

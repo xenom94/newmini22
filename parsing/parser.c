@@ -68,20 +68,20 @@ void	free_command(t_command *cmd)
 	int				i;
 
 	if (cmd->name)
-		gc_add(0, cmd->name);
+		free(cmd->name);
 	i = 0;
 	while (i < cmd->arg_count)
 	{
-		gc_add(0, cmd->args[i]);
+		free(cmd->args[i]);
 		i++;
 	}
-	gc_add(0, cmd->args);
+	free(cmd->args);
 	redir = cmd->redirections;
 	while (redir)
 	{
 		next = redir->next;
-		gc_add(0, redir->filename);
-		gc_add(0, redir);
+		free(redir->filename);
+		free(redir);
 		redir = next;
 	}
 	free(cmd);
